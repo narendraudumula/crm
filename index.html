@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete CRM System - Professional Edition</title>
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Authentication Pages -->
+    <!-- Sign In Page -->
+    <div id="signin-page" class="auth-page">
+        <div class="auth-container">
+            <div class="auth-logo">
+                <i class="fas fa-users-cog"></i>
+                <h1>Welcome Back</h1>
+                <p>Sign in to your CRM account</p>
+            </div>
+            <form class="auth-form" id="signin-form">
+                <div id="signin-message" class="success-message"></div>
+                <div id="signin-error" class="error-message"></div>
+                <div class="form-group">
+                    <label>Username <span>*</span></label>
+                    <input type="text" id="signin-username" placeholder="Enter your username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password <span>*</span></label>
+                    <div class="input-wrapper">
+                        <input type="password" id="signin-password" class="has-icon" placeholder="Enter your password"
+                            required>
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('signin-password', this)"></i>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+                <div class="form-links">
+                    <p style="margin-top: 15px;">Don't have an account?</p>
+                    <a href="#" onclick="showPage('signup'); return false;">Sign Up</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Sign Up Page -->
+    <div id="signup-page" class="auth-page" style="display: none;">
+        <div class="auth-container">
+            <div class="auth-logo">
+                <i class="fas fa-users-cog"></i>
+                <h1>Create Account</h1>
+                <p>Join our CRM system</p>
+            </div>
+            <form class="auth-form" id="signup-form">
+                <div id="signup-message" class="success-message"></div>
+                <div id="signup-error" class="error-message"></div>
+                <div class="form-group">
+                    <label>Full Name <span>*</span></label>
+                    <input type="text" id="signup-name" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label>Username <span>*</span></label>
+                    <input type="text" id="signup-username" placeholder="Choose a username" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address <span>*</span></label>
+                    <input type="email" id="signup-email" placeholder="your.email@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password <span>*</span></label>
+                    <div class="input-wrapper">
+                        <input type="password" id="signup-password" class="has-icon" placeholder="Create a password"
+                            required>
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('signup-password', this)"></i>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+                <div class="form-links">
+                    <p>Already have an account?</p>
+                    <a href="#" onclick="showPage('signin'); return false;">Sign In</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Main Dashboard -->
+    <div class="container" id="dashboard-page" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>CRM System</h2>
+                <div class="menu-icon" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active" onclick="showSection('dashboard')">
+                        <a href="#dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li onclick="showSection('employees')">
+                        <a href="#employees">
+                            <i class="fas fa-users"></i>
+                            <span>Employees</span>
+                        </a>
+                    </li>
+                    <li onclick="showSection('departments')">
+                        <a href="#departments">
+                            <i class="fas fa-sitemap"></i>
+                            <span>Departments</span>
+                        </a>
+                    </li>
+                    <li onclick="showSection('attendance')">
+                        <a href="#attendance">
+                            <i class="far fa-calendar-check"></i>
+                            <span>Attendance</span>
+                        </a>
+                    </li>
+                    <li onclick="showSection('leave')">
+                        <a href="#leave">
+                            <i class="fas fa-plane-departure"></i>
+                            <span>Leave Management</span>
+                        </a>
+                    </li>
+                    <li onclick="showSection('payroll')">
+                        <a href="#payroll">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            <span>Payroll</span>
+                        </a>
+                    </li>
+                    <li onclick="showSection('reports')">
+                        <a href="#reports">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <main class="main-content" id="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Customer Relationship Management</h1>
+                    <p id="current-date"></p>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <span id="user-name">Admin User</span>
+                        <img src="https://ui-avatars.com/api/?name=Admin+User&background=667eea&color=fff&size=128"
+                            alt="User" id="user-avatar">
+                    </div>
+                    <button id="logout-btn" title="Logout" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </header>
+            <!-- Dashboard Section -->
+            <div class="content-section active" id="dashboard">
+                <div class="summary-cards">
+                    <div class="card blue">
+                        <i class="fas fa-users"></i>
+                        <p id="total-employees-count">0</p>
+                        <span>Total Employees</span>
+                    </div>
+                    <div class="card green">
+                        <i class="fas fa-user-check"></i>
+                        <p id="present-count">0</p>
+                        <span>Present Today</span>
+                    </div>
+                    <div class="card yellow">
+                        <i class="fas fa-building"></i>
+                        <p id="department-count">0</p>
+                        <span>Departments</span>
+                    </div>
+                    <div class="card purple">
+                        <i class="fas fa-plane-departure"></i>
+                        <p id="leave-requests-count">0</p>
+                        <span>Leave Requests</span>
+                    </div>
+                </div>
+                <div class="report-card">
+                    <h3>Recent Employees</h3>
+                    <table id="dashboard-employee-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboard-employee-body">
+                            <!-- Data populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Employees Section -->
+            <div class="content-section" id="employees">
+                <div class="report-card">
+                    <h3>Employee Management</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="openAddEmployeeModal()">
+                            <i class="fas fa-user-plus"></i> Add Employee
+                        </button>
+                        <button class="btn btn-secondary" onclick="refreshEmployees()">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                    <table id="employee-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Designation</th>
+                                <th>Salary</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employee-body">
+                            <!-- Data populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Departments Section -->
+            <div class="content-section" id="departments">
+                <div class="report-card">
+                    <h3>Department Management</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="openAddDepartmentModal()">
+                            <i class="fas fa-plus"></i> Add Department
+                        </button>
+                    </div>
+                    <table id="department-table">
+                        <thead>
+                            <tr>
+                                <th>Department Name</th>
+                                <th>Head</th>
+                                <th>Employee Count</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="department-body">
+                            <!-- Data populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Attendance Section -->
+            <div class="content-section" id="attendance">
+                <div class="report-card">
+                    <h3>Attendance Management</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="markAttendance()">
+                            <i class="fas fa-clock"></i> Mark Attendance
+                        </button>
+                    </div>
+                    <table id="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Date</th>
+                                <th>In Time</th>
+                                <th>Out Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendance-body">
+                            <!-- Data populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Leave Section -->
+            <div class="content-section" id="leave">
+                <div class="report-card">
+                    <h3>Leave Management</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="openLeaveModal()">
+                            <i class="fas fa-plus"></i> Apply Leave
+                        </button>
+                    </div>
+                    <table id="leave-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Leave Type</th>
+                                <th>From Date</th>
+                                <th>To Date</th>
+                                <th>Days</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leave-body">
+                            <!-- Data populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Payroll Section -->
+            <div class="content-section" id="payroll">
+                <div class="report-card">
+                    <h3>Payroll Management</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="processPayroll()">
+                            <i class="fas fa-calculator"></i> Process Payroll
+                        </button>
+                    </div>
+                    <table id="payroll-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Basic Salary</th>
+                                <th>Allowances</th>
+                                <th>Deductions</th>
+                                <th>Net Salary</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payroll-body">
+                            <!-- Data populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Reports Section -->
+            <div class="content-section" id="reports">
+                <div class="report-card">
+                    <h3>Reports & Analytics</h3>
+                    <div class="summary-cards">
+                        <div class="card blue">
+                            <i class="fas fa-calendar-check"></i>
+                            <p>95%</p>
+                            <span>Attendance Rate</span>
+                        </div>
+                        <div class="card green">
+                            <i class="fas fa-clock"></i>
+                            <p>8.2</p>
+                            <span>Avg Work Hours</span>
+                        </div>
+                        <div class="card yellow">
+                            <i class="fas fa-plane"></i>
+                            <p id="report-leave-count">0</p>
+                            <span>Leave Requests</span>
+                        </div>
+                        <div class="card red">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <p id="report-salary-total">0</p>
+                            <span>Total Payroll</span>
+                        </div>
+                    </div>
+                    <div style="max-width: 600px; margin: 30px auto;">
+                        <canvas id="reportChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- Modals -->
+    <!-- Add Employee Modal -->
+    <div class="modal" id="employee-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Employee</h2>
+                <span class="close-modal" onclick="closeModal('employee-modal')">&times;</span>
+            </div>
+            <div class="form-group">
+                <label>Employee ID</label>
+                <input type="text" id="emp-id" placeholder="Auto-generated" readonly>
+            </div>
+            <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" id="emp-name" placeholder="Enter full name" required>
+            </div>
+            <div class="form-group">
+                <label>Email *</label>
+                <input type="email" id="emp-email" placeholder="email@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>Department *</label>
+                <select id="emp-department" required>
+                    <option value="">Select Department</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Designation *</label>
+                <input type="text" id="emp-designation" placeholder="e.g., Senior Developer" required>
+            </div>
+            <div class="form-group">
+                <label>Salary *</label>
+                <input type="number" id="emp-salary" placeholder="Enter salary" required>
+            </div>
+            <button class="btn btn-primary" onclick="saveEmployee()" style="width: 100%;">
+                <i class="fas fa-save"></i> Save Employee
+            </button>
+        </div>
+    </div>
+    <!-- Add Department Modal -->
+    <div class="modal" id="department-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Department</h2>
+                <span class="close-modal" onclick="closeModal('department-modal')">&times;</span>
+            </div>
+            <div class="form-group">
+                <label>Department Name *</label>
+                <input type="text" id="dept-name" placeholder="Enter department name" required>
+            </div>
+            <div class="form-group">
+                <label>Head of Department</label>
+                <input type="text" id="dept-head" placeholder="Enter head name">
+            </div>
+            <button class="btn btn-primary" onclick="saveDepartment()" style="width: 100%;">
+                <i class="fas fa-save"></i> Save Department
+            </button>
+        </div>
+    </div>
+    <!-- Leave Application Modal -->
+    <div class="modal" id="leave-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Apply for Leave</h2>
+                <span class="close-modal" onclick="closeModal('leave-modal')">&times;</span>
+            </div>
+            <div class="form-group">
+                <label>Employee *</label>
+                <select id="leave-employee" required>
+                    <option value="">Select Employee</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Leave Type *</label>
+                <select id="leave-type" required>
+                    <option value="">Select Type</option>
+                    <option>Annual Leave</option>
+                    <option>Sick Leave</option>
+                    <option>Casual Leave</option>
+                    <option>Emergency Leave</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>From Date *</label>
+                <input type="date" id="leave-from" required>
+            </div>
+            <div class="form-group">
+                <label>To Date *</label>
+                <input type="date" id="leave-to" required>
+            </div>
+            <div class="form-group">
+                <label>Reason *</label>
+                <textarea id="leave-reason" rows="3" placeholder="Enter reason..." required></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="saveLeave()" style="width: 100%;">
+                <i class="fas fa-paper-plane"></i> Submit Application
+            </button>
+        </div>
+    </div>
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+
+</html>
